@@ -1,0 +1,110 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+use YAML::Tiny;
+use File::Copy::Recursive qw(dircopy);
+use Cwd 'abs_path';
+use File::Spec;
+
+# Need change pahths for live!
+use constant {
+  DOCKER_COMPOSE_FILE_PATH =>"/home/matthiaspi/docker-compose.yml",
+  BACKUP_DESTINATION_DIR =>"/home/matthiaspi",
+  LOG_FILE=>"/tmp/temp.log",
+};
+
+use constant {
+    TX_BACKUP_START =>"[Info] The Backup started! ",
+    TX_FINISHED_BACKUP =>"[Info] Backup is done! ",
+    TX_FAILED_BACKUP =>"[Info] Failed to create backup ",
+    TX_NO_VOLUMES_FOUND =>"[Info] No Volumed found to backup ",        
+};
+
+sub main {
+    _PrintAndLog(TX_BACKUP_START());
+    my @found_volumes = _SearchDockerComposeFile(DOCKER_COMPOSE_FILE_PATH);
+
+    if (@found_volumes) {
+        _CopyVolumesToBackup(@found_volumes);
+    } else {
+        _PrintAndLog(TX_NO_VIRUS_FOUND());
+    }
+    _PrintAndLog(TX_FINISHED_BACKUP());
+}
+
+sub _ParseDockerComposeFile() {
+   my ($file_path) = @_;
+   my @volumes;
+
+    my $yaml = YAML::Tiny->read($file_path);
+    unless ($yaml) {
+        _PrintAndLog("Failed to read Docker Compose file: $file_path");
+    }
+
+    # Iterate through services to collect volume definitions
+    foreach my $service (values %{$yaml->[0]->{services}}) {
+        if (exists $service->{volumes}) {
+            push @volumes, @{$service->{volumes}};
+        }
+    }
+    return @volumes;
+}
+
+sub _CopyVolumesToBackup() {
+    my @volumes = @_;
+    my $backup_path = _CreateBackUpPath();
+
+    my @absolute_volume_paths = _ConvertToAbsolutePaths(@volumes);
+    my $tar_command = _ConstructTarCommand($backup_path, @absolute_volume_paths);
+
+    _ExecuteTarCommand($tar_command, $backup_path);
+}
+
+sub _CreateBackUpPath() {
+    my $timestamp = time;
+    my $backup_filename = "backup_${timestamp}.tar.gz";
+    return File::Spec->catfile(BACKUP_DESTINATION_DIR, $backup_filename);
+}
+
+sub _ConvertToAbsolutePaths() {
+    my @relative_paths = @_;
+    return map {
+        my $path = $_ =~ /^\// ? $_ : getcwd() . "/$_";
+        abs_path($path);  # Resolves symbolic links and relative path components
+    } @relative_paths;
+}
+
+sub _ConstructTarCommand() {
+    my ($backup_path, @paths) = @_;
+    my $escaped_backup_path = _EscapeShellArg($backup_path);
+    my $escaped_paths = join(" ", map { _EscapeShellArg($_) } @paths);
+    return "tar -czf $escaped_backup_path $escaped_paths";
+}
+
+# Checking if a command works with that "==0" is kinda lame but I was to lazy to do better :)
+sub _ExecuteTarCommand() {
+    my ($command, $backup_path) = @_;
+    _PrintAndLog("Creating backup archive: $backup_path...");
+    if (system($command) == 0) {
+        _PrintAndLog(TX_FINISHED_BACKUP() . "$backup_path");
+    } else {
+        _PrintAndLog(TX_FAILED_BACKUP() . "$backup_path");
+    }
+}
+
+sub _EscapeShellArg() {
+    my $arg = shift;
+    $arg =~ s/'/'\\''/g;  # Escape single quotes for shell safety
+    return "'$arg'";
+}
+
+sub _PrintAndLog($) {
+    my($givenLine)=@_;
+    my $line = localtime().":\t".$givenLine;
+
+    print $line."\n";
+    return unless open FILE,">>".LOG_FILE();
+    print FILE $line."\n";
+    close FILE;
+  }
