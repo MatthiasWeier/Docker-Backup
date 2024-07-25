@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.35013.160
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Docker Backup", "Docker Backup\Docker Backup.csproj", "{63AEB9EF-1BE1-48A5-83D3-E1702C67EE63}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{63AEB9EF-1BE1-48A5-83D3-E1702C67EE63}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{63AEB9EF-1BE1-48A5-83D3-E1702C67EE63}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{63AEB9EF-1BE1-48A5-83D3-E1702C67EE63}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{63AEB9EF-1BE1-48A5-83D3-E1702C67EE63}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {EA587B1E-6F20-44AF-B9EC-3AC261E043B4}
+	EndGlobalSection
+EndGlobal
