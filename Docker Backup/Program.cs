@@ -1,15 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using DockerBackup.Services;
 
-namespace Docker_Backup
-{
-  internal class Program
-  {
-    static void Main(string[] args)
-    {
-    }
-  }
-}
+// todo: apply basic code best practices
+var backupService = new BackupService();
+backupService.RunBackup();
