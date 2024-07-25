@@ -1,6 +1,6 @@
 ﻿namespace DockerBackup.Utils;
 
-public static class Constants {
+internal static class Constants {
   public const string BACKUP_DESTINATION_DIR = @"F:\testbackup";
   public const string LOG_FILE = @"C:\tmp\temp.log";
   public const string DOCKER_PATH = @"/var/lib/docker";

@@ -8,7 +8,7 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>Docker_Backup</RootNamespace>
     <AssemblyName>Docker Backup</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFramework>net80</TargetFramework>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
@@ -35,8 +35,30 @@
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Backports, Version=1.0.0.82, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\FrameworkExtensions.Backports.1.0.0.82\lib\net45\Backports.dll</HintPath>
+    </Reference>
+    <Reference Include="Corlib.Extensions, Version=1.0.2.382, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\FrameworkExtensions.Corlib.1.0.2.382\lib\net45\Corlib.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="DirectoryServices.Extensions, Version=1.0.0.30, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\FrameworkExtensions.DirectoryServices.1.0.0.30\lib\net45\DirectoryServices.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="PresentationCore.Extensions, Version=1.0.0.32, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\FrameworkExtensions.PresentationCore.1.0.0.32\lib\net45\PresentationCore.Extensions.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data.Linq" />
+    <Reference Include="System.DirectoryServices" />
+    <Reference Include="System.DirectoryServices.AccountManagement" />
+    <Reference Include="System.Drawing.Extensions, Version=1.0.0.35, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\FrameworkExtensions.System.Drawing.1.0.0.35\lib\net45\System.Drawing.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.Windows.Forms.Extensions, Version=1.0.0.49, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\FrameworkExtensions.System.Windows.Forms.1.0.0.49\lib\net45\System.Windows.Forms.Extensions.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -45,8 +67,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Properties\GlobalUsings.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
     <Compile Include="Services\BackupService.cs" />
     <Compile Include="Services\DockerService.cs" />
+    <Compile Include="Services\StartProcessService.cs" />
     <Compile Include="Utils\Logger.cs" />
     <Compile Include="Utils\Constants.cs" />
     <Compile Include="Program.cs" />
@@ -54,6 +83,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

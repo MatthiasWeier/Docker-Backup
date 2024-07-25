@@ -1,12 +1,12 @@
-﻿using System;
-using System.Diagnostics;
+﻿using Services;
 
 namespace DockerBackup.Services;
 
-public class DockerService {
-  public string[] GetContainerList() {
+internal class DockerService {
+  // todo: initialize this with StartProcessService
+  public static async Task<string[]> GetContainerListAsync() {
     var process = new Process {
-      StartInfo = new() {
+      StartInfo = new ProcessStartInfo {
         FileName = "docker",
         Arguments = "ps -a --format \"{{.ID}} {{.Image}}\"",
         RedirectStandardOutput = true,
@@ -15,36 +15,23 @@ public class DockerService {
       }
     };
     process.Start();
-    var output = process.StandardOutput.ReadToEnd();
+    var output = await process.StandardOutput.ReadToEndAsync();
     process.WaitForExit();
     return output.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
   }
 
-  public void ExportContainer(string containerId, string exportPath) {
+  public static async Task ExportContainerAsync(string containerId, string exportPath) {
     var exportCmd = $"docker export -o {exportPath} {containerId}";
-    this.ExecuteCommand(exportCmd, $"Failed to export container {containerId}");
+    await ExecuteCommandAsync(exportCmd);
   }
 
-  public void SaveImage(string imageName, string savePath) {
+  public static async Task SaveImageAsync(string imageName, string savePath) {
     var saveCmd = $"docker save -o {savePath} {imageName}";
-    this.ExecuteCommand(saveCmd, $"Failed to save image {imageName}");
+    await ExecuteCommandAsync(saveCmd);
   }
 
-  private void ExecuteCommand(string command, string errorMessage) {
-    var process = new Process {
-      StartInfo = new() {
-        FileName = "cmd.exe",
-        Arguments = $"/c \"{command}\"",
-        RedirectStandardOutput = true,
-        RedirectStandardError = true,
-        UseShellExecute = false,
-        CreateNoWindow = true
-      }
-    };
-    process.Start();
-    _ = process.StandardOutput.ReadToEnd();
-    var error = process.StandardError.ReadToEnd();
-    process.WaitForExit();
-    if (process.ExitCode != 0) throw new InvalidOperationException($"{errorMessage}: {error}");
+
+  private static async Task ExecuteCommandAsync(string command) {
+    StartProcessService.ExecuteCommand($"cmd.exe {command}");
   }
 }

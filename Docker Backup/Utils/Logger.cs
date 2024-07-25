@@ -1,10 +1,6 @@
-﻿using System;
-using System.IO;
-using DockerBackup.Utils;
+﻿namespace DockerBackup.Utils;
 
-namespace Docker_Backup.Utils;
-
-public static class Logger {
+internal static class Logger {
   public static void PrintAndLog(string message) {
     var line = $"{DateTime.Now}:\t{message}";
     Console.WriteLine(line);
