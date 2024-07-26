@@ -9,11 +9,17 @@ internal static class BackupService {
     Logger.PrintAndLog(Constants.TX_BACKUP_START);
     var containers = await DockerService.GetContainerListAsync();
     foreach (var container in containers) {
-      var parts = container.Split(' ');
-      var containerId = parts[0];
-      var imageName = parts[1];
-      Logger.PrintAndLog($"[INFO] Backing up {imageName}");
-      await BackupContainerAsync(containerId, imageName, backupDirectory);
+      var firstSpaceIndex = container.IndexOf(Constants.SPACE_DELIMITER, StringComparison.Ordinal);
+
+      if (firstSpaceIndex != -1) {
+        var containerId = container[..firstSpaceIndex];
+        var imageName = container[(firstSpaceIndex + 1)..];
+
+        Logger.PrintAndLog($"[INFO] Backing up {imageName}");
+        await BackupContainerAsync(containerId, imageName, backupDirectory);
+      } else
+        Logger.PrintAndLog($"[ERROR] Invalid container format: {container}");
+
     }
   }
 
