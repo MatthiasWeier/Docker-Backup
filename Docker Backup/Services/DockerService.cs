@@ -16,22 +16,17 @@ internal class DockerService {
     };
     process.Start();
     var output = await process.StandardOutput.ReadToEndAsync();
-    process.WaitForExit();
+    await process.WaitForExitAsync();
     return output.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
   }
 
-  public static async Task ExportContainerAsync(string containerId, string exportPath) {
-    var exportCmd = $"docker export -o {exportPath} {containerId}";
-    await ExecuteCommandAsync(exportCmd);
+  public static async Task ExportContainerAsync(string containerId, FileInfo exportPath) {
+    var exportCmd = $"export -o {exportPath} {containerId}";
+    await StartProcessService.ExecuteCommand("docker", exportCmd);
   }
 
-  public static async Task SaveImageAsync(string imageName, string savePath) {
-    var saveCmd = $"docker save -o {savePath} {imageName}";
-    await ExecuteCommandAsync(saveCmd);
-  }
-
-
-  private static async Task ExecuteCommandAsync(string command) {
-    StartProcessService.ExecuteCommand($"cmd.exe {command}");
+  public static async Task SaveImageAsync(string imageName, FileInfo saveContainer) {
+    var saveCmd = $"docker save -o {saveContainer.FullName} {imageName}";
+    await StartProcessService.ExecuteCommand("docker", saveCmd);
   }
 }

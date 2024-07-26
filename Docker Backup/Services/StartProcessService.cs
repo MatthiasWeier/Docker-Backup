@@ -4,9 +4,9 @@
 ///   Allows executing Processes via command line.
 /// </summary>
 internal class StartProcessService {
-    public static Task<string> ExecuteCommand(params string[] arguments) => _ExecuteCommand(
-        "ffprobe.exe",
-        +arguments.Join(" ").ReplaceLineEndings(" ")
+    public static Task<string> ExecuteCommand(string executable, params string[] arguments) => _ExecuteCommand(
+        executable,
+        arguments.Join(" ").ReplaceLineEndings(" ")
     );
 
     /// <summary>
