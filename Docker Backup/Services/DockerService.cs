@@ -5,20 +5,7 @@ namespace Services;
 internal class DockerService {
   // todo: initialize this with StartProcessService - need to create overload 
   public static async Task<string[]> GetContainerListAsync() {
-    // await StartProcessService.ExecuteCommand("docker",$"ps - a--format \\\"{{.ID}} {{.Image}}\\\"");
-    
-    var process = new Process {
-      StartInfo = new ProcessStartInfo {
-        FileName = "docker",
-        Arguments = "ps -a --format \"{{.ID}} {{.Image}}\"",
-        RedirectStandardOutput = true,
-        UseShellExecute = false,
-        CreateNoWindow = true
-      }
-    };
-    process.Start();
-    var output = await process.StandardOutput.ReadToEndAsync();
-    await process.WaitForExitAsync();
+    var output = await StartProcessService.ExecuteCommand("docker","ps -a --format \"{{.ID}} {{.Image}}\"");
     return output.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
   }
 
