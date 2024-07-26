@@ -1,5 +1,5 @@
 ﻿namespace DockerBackup.Utils;
-
+//todo: make it a resx
 internal static class Constants {
   public const string TX_BACKUP_START = "[Info] The Backup started! ";
   public const string TX_FINISHED_BACKUP = "[Info] Backup is done! ";

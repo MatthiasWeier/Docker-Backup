@@ -1,9 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Services;
+﻿namespace Services;
 
 internal static class BackupService {
-  
+  private const string _TIME_FORMAT = "yyyyMMdd";
+  private const string _IMAGE_FILE_NAME = "image-backup.tar";
+
   public static async Task RunBackupAsync(DirectoryInfo backupDirectory) {
     ArgumentNullException.ThrowIfNull(backupDirectory);
     Logger.PrintAndLog(Constants.TX_BACKUP_START);
@@ -19,19 +19,11 @@ internal static class BackupService {
 
   private static async Task BackupContainerAsync(string containerId, string imageName, DirectoryInfo backupDirectory) {
     var timestamp = GetCurrentTimestamp();
-    var containerBackup = new FileInfo(
-      Path.Combine($"{backupDirectory.FullName}\\{timestamp}-{containerId}container-backup.tar")
-    );
-    ArgumentNullException.ThrowIfNull(containerBackup);
 
-    var imageBackup = new FileInfo(
-      Path.Combine($"{backupDirectory.FullName}\\{timestamp}-{containerId}-image-backup.tar")
-    );
-
-    ArgumentNullException.ThrowIfNull(imageBackup);
+    var imageBackup = backupDirectory.File($"{timestamp}-{containerId}-{BackupService._IMAGE_FILE_NAME}");
 
     await DockerService.SaveImageAsync(imageName, imageBackup);
   }
 
-  private static string GetCurrentTimestamp() => DateTime.Now.ToString("yyyyMMdd");
+  private static string GetCurrentTimestamp() => DateTime.Now.ToString(BackupService._TIME_FORMAT);
 }
