@@ -1,10 +1,12 @@
-﻿using Services;
+﻿using GoogleApi.Entities.Translate.Translate.Request.Enums;
 
-namespace DockerBackup.Services;
+namespace Services;
 
 internal class DockerService {
-  // todo: initialize this with StartProcessService
+  // todo: initialize this with StartProcessService - need to create overload 
   public static async Task<string[]> GetContainerListAsync() {
+    // await StartProcessService.ExecuteCommand("docker",$"ps - a--format \\\"{{.ID}} {{.Image}}\\\"");
+    
     var process = new Process {
       StartInfo = new ProcessStartInfo {
         FileName = "docker",
@@ -20,13 +22,8 @@ internal class DockerService {
     return output.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
   }
 
-  public static async Task ExportContainerAsync(string containerId, FileInfo exportPath) {
-    var exportCmd = $"export -o {exportPath} {containerId}";
-    await StartProcessService.ExecuteCommand("docker", exportCmd);
-  }
-
   public static async Task SaveImageAsync(string imageName, FileInfo saveContainer) {
-    var saveCmd = $"docker save -o {saveContainer.FullName} {imageName}";
+    var saveCmd = $"save -o {saveContainer.FullName} {imageName}";
     await StartProcessService.ExecuteCommand("docker", saveCmd);
   }
 }

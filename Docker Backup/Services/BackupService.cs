@@ -1,6 +1,6 @@
-﻿using Services;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace DockerBackup.Services;
+namespace Services;
 
 internal static class BackupService {
   
@@ -12,25 +12,20 @@ internal static class BackupService {
       var parts = container.Split(' ');
       var containerId = parts[0];
       var imageName = parts[1];
+      Logger.PrintAndLog($"[INFO] Backing up {imageName}");
       await BackupContainerAsync(containerId, imageName, backupDirectory);
     }
-
-    await CreateSingleBackupAsync(backupDirectory);
   }
 
   private static async Task BackupContainerAsync(string containerId, string imageName, DirectoryInfo backupDirectory) {
+    var timestamp = GetCurrentTimestamp();
     var containerBackup = new FileInfo(
-      Path.Combine(backupDirectory.FullName, "container_" + containerId + "container_backup.tar")
+      Path.Combine($"{backupDirectory.FullName}\\{timestamp}-{containerId}container-backup.tar")
     );
-
-    
-
     ArgumentNullException.ThrowIfNull(containerBackup);
 
-    await DockerService.ExportContainerAsync(containerId, containerBackup);
-
     var imageBackup = new FileInfo(
-      Path.Combine(backupDirectory.FullName, "container_" + containerId + "image_backup.tar")
+      Path.Combine($"{backupDirectory.FullName}\\{timestamp}-{containerId}-image-backup.tar")
     );
 
     ArgumentNullException.ThrowIfNull(imageBackup);
@@ -38,18 +33,5 @@ internal static class BackupService {
     await DockerService.SaveImageAsync(imageName, imageBackup);
   }
 
-  private static string GetTime() => DateTime.Now.ToString("yyyyMMddHHmm");
-
-  private static async Task CreateSingleBackupAsync(DirectoryInfo backupDirectory) {
-    var timestamp = GetTime();
-    var backupFile = new FileInfo(Path.Combine(backupDirectory.FullName, $"docker_backup_{timestamp}.tar.gz"));
-    var tempDir = backupDirectory.CreateSubdirectory("temp_backup");
-
-    Logger.PrintAndLog(Constants.TX_CREATING_SINGLE_TAR);
-    var tarCmd = $"-czf {backupFile.FullName} -C {tempDir.FullName} .";
-    await StartProcessService.ExecuteCommand("tar",tarCmd);
-
-    Logger.PrintAndLog($"{Constants.TX_FINISHED_BACKUP} {backupFile.FullName}");
-    Directory.Delete(tempDir.FullName, true);
-  }
+  private static string GetCurrentTimestamp() => DateTime.Now.ToString("yyyyMMdd");
 }

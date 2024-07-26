@@ -6,9 +6,10 @@ internal static class Logger {
   public static void PrintAndLog(string message) {
     var line = $"{DateTime.Now}:\t{message}";
     Console.WriteLine(line);
-    if(!Logger._LOG_FILE.Exists)
+    if (!Logger._LOG_FILE.Exists)
       Logger._LOG_FILE.Create();
-
+      
+    //todo: First time file is created this throws an exception --> fix
     File.AppendAllText(Logger._LOG_FILE.FullName, line + Environment.NewLine);
   }
 }

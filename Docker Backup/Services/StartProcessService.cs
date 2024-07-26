@@ -21,7 +21,7 @@ internal class StartProcessService {
             Arguments = arguments,
         };
 
-        Console.WriteLine($"This is my command: {executableName} {psi.Arguments}");
+        Logger.PrintAndLog($"This is my command: {executableName} {psi.Arguments}");
 
         var isEnded = 0;
         var asyncResult = psi.BeginRedirectedRun();

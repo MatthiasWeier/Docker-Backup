@@ -10,6 +10,6 @@ global using System.Reflection;
 global using System.Text;
 global using System.Threading;
 global using System.Threading.Tasks;
-global using DockerBackup.Services;
+global using Services;
 global using DockerBackup.Utils;
 global using Docker_Backup.Properties;
